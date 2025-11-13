@@ -1,14 +1,18 @@
 {
   "name": "podcast-studio-portal",
   "version": "1.0.0",
-  "description": "",
+  "description": "A real-time project management portal for podcast production.",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build", <--- **THIS IS THE CRITICAL LINE**
+    "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": [],
+  "keywords": [
+    "react",
+    "supabase",
+    "netlify"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
