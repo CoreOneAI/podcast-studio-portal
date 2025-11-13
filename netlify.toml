@@ -1,0 +1,22 @@
+# Netlify Configuration File
+
+# 1. Build Settings (adjust if using CRA or Vite - assuming 'dist' for Vite build output)
+[build]
+  command = "npm run build"
+  publish = "dist" # Change this to "build" if using Create React App
+
+# 2. Netlify Functions Configuration
+# This tells Netlify where to find and build your serverless functions.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  # Set the environment variable here for the functions, though setting it in the Netlify UI is more secure
+  # environment = { GEMINI_API_KEY = "value_goes_in_netlify_ui" }
+
+
+# 3. Headers (Optional but useful for security)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
