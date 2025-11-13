@@ -1,0 +1,25 @@
+/* src/styles/index.css */
+
+/*
+The three Tailwind directives are crucial. They inject the base,
+component, and utility styles necessary for the framework to work.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+Optional: Apply a default font and background color to the body
+for a consistent look across the application.
+*/
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa; /* Light gray background */
+}
+
+/*
+Optional: Basic styling for the root element
+*/
+#root {
+    min-height: 100vh;
+}
