@@ -1,16 +1,19 @@
-// src/App.js
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-// Pages
-import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
-import ProjectDetails from './pages/ProjectDetails';
-import ProjectForm from './pages/ProjectForm';
-import GuestManagement from './pages/GuestManagement';
-import AIChatAssistant from './pages/AIChatAssistant';
-// Components
-import Sidebar from './components/navigation/Sidebar';
+
+// CRUCIAL FIXES: All component imports must use the .jsx extension
+import { AuthProvider, useAuth } from './context/AuthContext.jsx'; 
+import Sidebar from './components/navigation/Sidebar.js'; // NOTE: Assuming Sidebar is plain JS, but most components were renamed
+
+// Pages (all renamed to .jsx)
+import Dashboard from './pages/Dashboard.jsx';
+import Login from './pages/Login.jsx';
+import ProjectDetails from './pages/ProjectDetails.jsx';
+import ProjectForm from './pages/ProjectForm.jsx';
+import GuestManagement from './pages/GuestManagement.jsx';
+import AIChatAssistant from './pages/AIChatAssistant.jsx';
+
 
 // --- Private Route Component ---
 const ProtectedRoute = ({ children }) => {
@@ -28,7 +31,7 @@ const ProtectedRoute = ({ children }) => {
 const Layout = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar Component: We'll style this with your Navy Blue theme */}
+      {/* Sidebar Component */}
       <Sidebar />
       
       {/* Main Content Area */}
