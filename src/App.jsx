@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // CRUCIAL FIXES: All component imports must use the .jsx extension
 import { AuthProvider, useAuth } from './context/AuthContext.jsx'; 
-import Sidebar from './components/navigation/Sidebar.js'; // NOTE: Assuming Sidebar is plain JS, but most components were renamed
+import Sidebar from './components/navigation/Sidebar.jsx'; // NOTE: Assuming Sidebar is plain JS, but most components were renamed
 
 // Pages (all renamed to .jsx)
 import Dashboard from './pages/Dashboard.jsx';
