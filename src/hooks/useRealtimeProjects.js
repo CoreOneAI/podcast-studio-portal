@@ -1,14 +1,14 @@
 // src/hooks/useRealtimeProjects.js
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext.jsx'; 
 
 export const useRealtimeProjects = () => {
   const { user, isAuthenticated } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const teamId = user?.team_id; // Safely get the team_id
+  const teamId = user?.team_id; 
 
   useEffect(() => {
     if (!isAuthenticated || !teamId) {
@@ -40,17 +40,15 @@ export const useRealtimeProjects = () => {
     fetchProjects();
 
     // 2. Real-time Subscription
-    // Subscribe to all changes (INSERT, UPDATE, DELETE) for the projects table
-    // where the team_id matches the user's team.
     const projectsSubscription = supabase
-      .channel('projects-team-' + teamId) // Unique channel name per team
+      .channel('projects-team-' + teamId) 
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen for all events
+          event: '*', 
           schema: 'public',
           table: 'projects',
-          filter: `team_id=eq.${teamId}`, // Real-time filter by team_id
+          filter: `team_id=eq.${teamId}`, 
         },
         (payload) => {
           setProjects((currentProjects) => {
@@ -59,15 +57,12 @@ export const useRealtimeProjects = () => {
 
             switch (payload.eventType) {
               case 'INSERT':
-                // Add new project to the start of the list
                 return [newRecord, ...currentProjects];
               case 'UPDATE':
-                // Replace the old version with the updated one
                 return currentProjects.map((p) =>
                   p.id === newRecord.id ? newRecord : p
                 );
               case 'DELETE':
-                // Remove the deleted project
                 return currentProjects.filter((p) => p.id !== oldRecord.id);
               default:
                 return currentProjects;
@@ -77,7 +72,6 @@ export const useRealtimeProjects = () => {
       )
       .subscribe();
 
-    // Cleanup function: Unsubscribe when the component unmounts or teamId changes
     return () => {
       supabase.removeChannel(projectsSubscription);
     };
