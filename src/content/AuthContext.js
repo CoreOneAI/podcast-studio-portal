@@ -1,4 +1,3 @@
-// src/context/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient'; // Ensure path is correct
 
@@ -16,8 +15,6 @@ export const AuthProvider = ({ children }) => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (session) {
         // A user's team_id is often stored in the 'public.profiles' table
-        // or directly in the auth.users metadata if you set it there.
-        // We assume it's in the 'public.profiles' table.
         await getUserProfile(session.user);
       } else if (error) {
         console.error('Error fetching session:', error);
