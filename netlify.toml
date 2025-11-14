@@ -1,20 +1,30 @@
 # Netlify Configuration File
 
-# 1. Build Settings (adjust if using CRA or Vite - assuming 'dist' for Vite build output)
+# ----------------------------------------------------
+# 1. BUILD SETTINGS
+# Netlify builds the app by running 'npm run build' in the root,
+# and publishes the output from the 'dist' folder.
 [build]
   command = "npm run build"
-  publish = "dist" # Change this to "build" if using Create React App
+  publish = "dist" 
+  
+# CRITICAL FIX: Base directory should be empty as package.json is in the root.
+  base = ""
 
-# 2. Netlify Functions Configuration
-# This tells Netlify where to find and build your serverless functions.
+# ----------------------------------------------------
+# 2. ENVIRONMENT PINNING (Overrides Node v22 default)
+# This forces Netlify to use a stable Long-Term Support version (v18).
+[build.environment]
+  NODE_VERSION = "18"
+
+# ----------------------------------------------------
+# 3. NETLIFY FUNCTIONS (for gemini-chat.js)
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  # Set the environment variable here for the functions, though setting it in the Netlify UI is more secure
-  # environment = { GEMINI_API_KEY = "value_goes_in_netlify_ui" }
 
-
-# 3. Headers (Optional but useful for security)
+# ----------------------------------------------------
+# 4. SECURITY HEADERS
 [[headers]]
   for = "/*"
   [headers.values]
