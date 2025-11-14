@@ -1,9 +1,16 @@
-// vite.config.js
+// vite.config.js (ESM)
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// The project root is set to 'public' to find index.html,
-// and we enable the react plugin to transform JSX.
+
 export default defineConfig({
   root: 'public',
   plugins: [react()],
+  build: {
+    // FINAL FIX: Explicitly set the entry file to ensure the build runs correctly.
+    rollupOptions: {
+      input: {
+        main: './src/index.jsx', // This ensures Vite knows where to start the JS bundling
+      },
+    },
+  },
 });
