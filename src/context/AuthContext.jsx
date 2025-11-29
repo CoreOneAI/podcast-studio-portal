@@ -1,87 +1,100 @@
+// src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient'; // Ensure path is correct
+import { auth } from '../firebase'; // Import Firebase auth object
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+// If you need Firestore for user roles, import it too:
+// import { db } from '../firebase';
+// import { doc, getDoc } from 'firebase/firestore';
 
+// Create the AuthContext
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+// Custom hook to use the auth context
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
+// AuthProvider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userRole, setUserRole] = useState(null); // To store the user's role
   const [loading, setLoading] = useState(true);
 
+  const getUserRole = async (user) => {
+    if (!user) return null;
+    // --- Placeholder for Firebase User Role Logic ---
+    // Example using Firestore (requires importing 'db' and Firestore functions):
+    // try {
+    //   const userDocRef = doc(db, 'users', user.uid); // Assuming a 'users' collection
+    //   const userDoc = await getDoc(userDocRef);
+    //   if (userDoc.exists()) {
+    //     return userDoc.data().role || null;
+    //   }
+    //   return null;
+    // } catch (error) {
+    //   console.error('Error fetching user role with Firebase:', error.message);
+    //   return null;
+    // }
+    // --- End Placeholder ---
+    
+    // For now, returning null or a default role if not implementing Firebase DB roles yet
+    return null; // Or 'listener', 'basic', etc.
+  };
+
   useEffect(() => {
-    // 1. Initial Check and Session Subscription
-    const fetchSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (session) {
-        // A user's team_id is often stored in the 'public.profiles' table
-        await getUserProfile(session.user);
-      } else if (error) {
-        console.error('Error fetching session:', error);
+    // Subscribe to Firebase auth changes
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user); // user will be null if logged out, or a User object if logged in
+      if (user) {
+        const role = await getUserRole(user);
+        setUserRole(role);
+      } else {
+        setUserRole(null);
       }
-      setLoading(false);
-    };
+      setLoading(false); // Authentication state has been determined
+    });
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          await getUserProfile(session.user);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-        }
-        // No need to set loading here, as it's handled by the initial check
-      }
-    );
+    // Cleanup the auth listener when the component unmounts
+    return () => unsubscribe();
+  }, []); // auth as dependency if it might change, but typically it's static
 
-    fetchSession();
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
-
-  // Helper to get user profile and team_id
-  const getUserProfile = async (supabaseUser) => {
-    const { data: profile, error } = await supabase
-      .from('profiles') // Assuming you have a 'profiles' table
-      .select('team_id')
-      .eq('id', supabaseUser.id)
-      .single();
-
-    if (error) {
-      console.error('Error fetching user profile:', error);
-      // Fallback: Use the standard user object without team_id
-      setUser(supabaseUser);
-    } else if (profile) {
-      // Combine Supabase User object with the essential team_id
-      setUser({ ...supabaseUser, team_id: profile.team_id });
-    }
-  };
-
-  // Auth functions
+  // Login function using Firebase Email/Password
   const signIn = async (email, password) => {
-    setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    return { data, error };
-  };
-
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-        setUser(null);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      // Firebase's onAuthStateChanged listener will handle updating the currentUser state
+      return userCredential.user;
+    } catch (error) {
+      console.error("Firebase Login Error:", error.message);
+      // Firebase auth errors have 'code' and 'message' properties
+      throw new Error(error.message || 'Login failed');
     }
-    return { error };
   };
 
+  // Logout function using Firebase
+  const logout = async () => { // Renamed from signOut to logout to avoid conflict with imported signOut function
+    try {
+      await signOut(auth);
+      // Firebase's onAuthStateChanged listener will handle updating the currentUser state
+    } catch (error) {
+      console.error("Firebase Logout Error:", error.message);
+      throw new Error(error.message || 'Logout failed');
+    }
+  };
+
+  // The value provided to children components
   const value = {
-    user,
+    currentUser,
+    userRole,
     loading,
     signIn,
-    signOut,
-    // team_id is accessible via user.team_id
-    isAuthenticated: !!user && !!user.team_id,
+    logout, // Use logout here
+    // You might add signUp, resetPassword, etc. here using Firebase methods
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children} {/* Only render children once auth state is determined */}
+    </AuthContext.Provider>
+  );
 };

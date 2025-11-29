@@ -1,5 +1,11 @@
 [build]
-  # FINAL FIX: This runs the build and forces a successful exit code (0), 
-  # preventing Netlify from deleting the 'dist' folder.
-  command = "npm run build && echo SUCCESS"
+  command = "npm run build"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
