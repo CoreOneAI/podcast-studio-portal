@@ -2,7 +2,7 @@
   "name": "podcast-studio-portal",
   "version": "1.0.0",
   "description": "A real-time project management portal for podcast production.",
-  "main": "index.js",
+  "main": "src/index.jsx",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,17 +10,19 @@
   },
   "keywords": [
     "react",
-    "supabase",
-    "netlify"
+    "firebase",
+    "vite"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@google/genai": "^0.15.0",
     "@supabase/supabase-js": "^2.43.4",
+    "firebase": "^12.6.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.23.1",
+    "react-router-dom": "^6.30.2",
+    "twilio-video": "^2.33.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

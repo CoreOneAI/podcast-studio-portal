@@ -1,0 +1,5 @@
+mKOer2bwrmteC7s7DQRGkFLp6FfCmOVJVv8NgmT5J1vLi7HQtA
+
+
+firebase functions:config:set vonage.api_key="064b874b"
+firebase functions:config:set vonage.api_secret="mKOer2bwrmteC7s7DQRGkFLp6FfCmOVJVv8NgmT5J1vLi7HQtA"
